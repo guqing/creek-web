@@ -9,9 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>xyz.guqing</groupId>
-    <artifactId>authorization</artifactId>
+    <artifactId>authorization-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>authorization</name>
+
+    <name>authorization-server</name>
     <description>springsecurity 权限管理系统</description>
 
     <properties>

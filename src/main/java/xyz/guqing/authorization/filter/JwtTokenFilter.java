@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import xyz.guqing.authorization.common.Const;
 import xyz.guqing.authorization.common.JwtTokenUtil;
+import xyz.guqing.authorization.entity.UserToken;
 import xyz.guqing.authorization.service.MyUserDetailsService;
+import xyz.guqing.authorization.service.UserTokenService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,6 +28,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    @Autowired
+    private UserTokenService userTokenService;
+
     @Override
     protected void doFilterInternal (HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
@@ -41,9 +46,23 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(
                             request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                }else if(jwtTokenUtil.canTokenBeRefreshed(authToken)){
+                    // token过期了，需要刷新token
+                    String newToken = generateTokenAndSetDB(userDetails);
+                    response.setHeader(Const.HEADER_STRING, newToken);
                 }
             }
         }
         chain.doFilter(request, response);
+    }
+
+    private String generateTokenAndSetDB(UserDetails userDetails){
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        //将token写入数据库中
+        UserToken userToken = new UserToken();
+        userToken.setUsername(userDetails.getUsername());
+        userToken.setToken(token);
+        userTokenService.save(userToken);
+        return token;
     }
 }
