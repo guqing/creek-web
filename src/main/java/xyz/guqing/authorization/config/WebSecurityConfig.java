@@ -14,6 +14,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import xyz.guqing.authorization.filter.JwtTokenFilter;
+import xyz.guqing.authorization.properties.LoginProperties;
+import xyz.guqing.authorization.properties.MySecurityAutoConfiguration;
 import xyz.guqing.authorization.security.*;
 import xyz.guqing.authorization.service.MyUserDetailsService;
 
@@ -39,6 +41,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailsService userService;
 
+    @Autowired
+    private MySecurityAutoConfiguration securityAutoConfiguration;
+
     @Bean
     public JwtTokenFilter authenticationTokenFilterBean() throws Exception {
         return new JwtTokenFilter();
@@ -56,6 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure( HttpSecurity httpSecurity ) throws Exception {
+        LoginProperties loginProperties = securityAutoConfiguration.getLoginProperties();
         httpSecurity.cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 使用 JWT，关闭token
                 .and()
@@ -69,13 +75,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .access("@rbacauthorityservice.hasPermission(request,authentication)") // RBAC 动态 url 认证
 
                 .and()
-                .formLogin().loginProcessingUrl("/authentication/login")  //开启登录
+                .formLogin().loginProcessingUrl(loginProperties.getLoginUrl())  //开启登录
                 .successHandler(authenticationSuccessHandler) // 登录成功
                 .failureHandler(authenticationFailureHandler) // 登录失败
                 .permitAll()
 
                 .and()
-                .logout().logoutUrl("/logout")
+                .logout().logoutUrl(loginProperties.getLogoutUrl())
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .permitAll();
 

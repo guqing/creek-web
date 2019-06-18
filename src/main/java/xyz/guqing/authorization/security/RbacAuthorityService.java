@@ -1,7 +1,5 @@
 package xyz.guqing.authorization.security;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -20,7 +18,7 @@ public class RbacAuthorityService {
     public boolean hasPermission(HttpServletRequest request, Authentication authentication) {
 
         Object principal = authentication.getPrincipal();
-        System.out.println(JSONObject.toJSONString(principal));
+
         boolean hasPermission  = false;
         
         if (principal instanceof MyUserDetails) {
@@ -40,11 +38,14 @@ public class RbacAuthorityService {
             for(SysPermission permission : permissionList){
                 urls.add(permission.getUrl());
             }
-            System.out.println(request.getRequestURI());
-            System.out.println("-->"+ JSONArray.toJSONString(urls));
             hasPermission = matcherUrl(request, urls);
     
             return hasPermission;
+        }else if("anonymousUser".equalsIgnoreCase(principal.toString())){
+            //公共资源
+            Set<String> urls = new HashSet<>();
+            urls.add("/get");
+            hasPermission = matcherUrl(request, urls);
         }
         return hasPermission;
     }

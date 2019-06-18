@@ -11,7 +11,7 @@ import java.util.Map;
  * <pre>
  *  {
  *      errno： 错误码，
- *      errmsg：错误消息，
+ *      message：错误消息，
  *      data：  响应数据
  *  }
  * </pre>
@@ -33,81 +33,47 @@ import java.util.Map;
  * <li> 504，更新数据失效，即后端采用了乐观锁更新，而并发更新时存在数据更新失效；
  * <li> 505，更新数据失败，即后端数据库更新失败（正常情况应该更新成功）。
  * </ul>
- * <li> 6xx，小商城后端业务错误码，
- * 具体见litemall-admin-api模块的AdminResponseCode。
- * <li> 7xx，管理后台后端业务错误码，
- * 具体见litemall-wx-api模块的WxResponseCode。
- * </ul>
  */
 public class ResponseUtil {
     public static Object ok() {
         Map<String, Object> obj = new HashMap<String, Object>();
         obj.put("errno", 0);
-        obj.put("errmsg", "成功");
+        obj.put("message", "成功");
         return obj;
     }
 
     public static Object ok(Object data) {
         Map<String, Object> obj = new HashMap<String, Object>();
         obj.put("errno", 0);
-        obj.put("errmsg", "成功");
+        obj.put("message", "成功");
         obj.put("data", data);
         return obj;
     }
 
     public static Object okList(List list) {
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("list", list);
-
-        if (list instanceof Page) {
-            Page page = (Page) list;
-            data.put("total", page.getTotal());
-            data.put("page", page.getPageNum());
-            data.put("limit", page.getPageSize());
-            data.put("pages", page.getPages());
-        }
-        else{
-            data.put("total", list.size());
-            data.put("page", 1);
-            data.put("limit", list.size());
-            data.put("pages", 1);
-        }
+        Map<String, Object> data = buildModelMapData(list, list);
 
         return ok(data);
     }
 
     public static Object okList(List list, List pagedList) {
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("list", list);
-
-        if (pagedList instanceof Page) {
-            Page page = (Page) pagedList;
-            data.put("total", page.getTotal());
-            data.put("page", page.getPageNum());
-            data.put("limit", page.getPageSize());
-            data.put("pages", page.getPages());
-        }
-        else{
-            data.put("total", pagedList.size());
-            data.put("page", 1);
-            data.put("limit", pagedList.size());
-            data.put("pages", 1);
-        }
+        Map<String, Object> data = buildModelMapData(list, pagedList);
 
         return ok(data);
     }
 
+
     public static Object fail() {
         Map<String, Object> obj = new HashMap<String, Object>();
         obj.put("errno", -1);
-        obj.put("errmsg", "错误");
+        obj.put("message", "错误");
         return obj;
     }
 
     public static Object fail(int errno, String errmsg) {
         Map<String, Object> obj = new HashMap<String, Object>();
         obj.put("errno", errno);
-        obj.put("errmsg", errmsg);
+        obj.put("message", errmsg);
         return obj;
     }
 
@@ -141,6 +107,25 @@ public class ResponseUtil {
 
     public static Object unauthz() {
         return fail(506, "无操作权限");
+    }
+
+    private static Map<String, Object> buildModelMapData(List list, List pagedList) {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("list", list);
+
+        if (pagedList instanceof Page) {
+            Page page = (Page) pagedList;
+            data.put("total", page.getTotal());
+            data.put("page", page.getPageNum());
+            data.put("limit", page.getPageSize());
+            data.put("pages", page.getPages());
+        } else {
+            data.put("total", pagedList.size());
+            data.put("page", 1);
+            data.put("limit", pagedList.size());
+            data.put("pages", 1);
+        }
+        return data;
     }
 }
 

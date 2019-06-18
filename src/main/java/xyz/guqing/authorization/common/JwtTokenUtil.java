@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import xyz.guqing.authorization.entity.MyUserDetails;
 import xyz.guqing.authorization.entity.UserToken;
+import xyz.guqing.authorization.properties.MySecurityAutoConfiguration;
+import xyz.guqing.authorization.properties.TokenProperties;
 import xyz.guqing.authorization.service.UserTokenService;
 
 import java.io.Serializable;
@@ -19,6 +21,8 @@ import java.util.Map;
 public class JwtTokenUtil implements Serializable {
     @Autowired
     private UserTokenService userTokenService;
+    @Autowired
+    MySecurityAutoConfiguration securityProperties;
 
     private static final long serialVersionUID = -5625635588908941275L;
 
@@ -59,10 +63,11 @@ public class JwtTokenUtil implements Serializable {
     }
 
     private Claims getClaimsFromToken(String token) {
+        TokenProperties tokenProperties = securityProperties.getTokenProperties();
         Claims claims;
         try {
             claims = Jwts.parser()
-                    .setSigningKey( Const.SECRET )
+                    .setSigningKey(tokenProperties.getSecret())
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
@@ -72,7 +77,8 @@ public class JwtTokenUtil implements Serializable {
     }
 
     private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + Const.EXPIRATION_TIME * 1000);
+        TokenProperties tokenProperties = securityProperties.getTokenProperties();
+        return new Date(System.currentTimeMillis() + tokenProperties.getExpirationTime() * 1000);
     }
 
     private Boolean isTokenExpired(String token) {
@@ -92,10 +98,11 @@ public class JwtTokenUtil implements Serializable {
     }
 
     String generateToken(Map<String, Object> claims) {
+        TokenProperties tokenProperties = securityProperties.getTokenProperties();
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, Const.SECRET )
+                .signWith(SignatureAlgorithm.HS512, tokenProperties.getSecret())
                 .compact();
     }
 
