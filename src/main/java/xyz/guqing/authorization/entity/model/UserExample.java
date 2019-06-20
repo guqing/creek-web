@@ -1,4 +1,4 @@
-package xyz.guqing.authorization.entity;
+package xyz.guqing.authorization.entity.model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -115,52 +115,52 @@ public class UserExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(Integer value) {
+        public Criteria andIdEqualTo(Long value) {
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(Integer value) {
+        public Criteria andIdNotEqualTo(Long value) {
             addCriterion("id <>", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(Integer value) {
+        public Criteria andIdGreaterThan(Long value) {
             addCriterion("id >", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andIdGreaterThanOrEqualTo(Long value) {
             addCriterion("id >=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(Integer value) {
+        public Criteria andIdLessThan(Long value) {
             addCriterion("id <", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(Integer value) {
+        public Criteria andIdLessThanOrEqualTo(Long value) {
             addCriterion("id <=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdIn(List<Integer> values) {
+        public Criteria andIdIn(List<Long> values) {
             addCriterion("id in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<Integer> values) {
+        public Criteria andIdNotIn(List<Long> values) {
             addCriterion("id not in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(Integer value1, Integer value2) {
+        public Criteria andIdBetween(Long value1, Long value2) {
             addCriterion("id between", value1, value2, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andIdNotBetween(Long value1, Long value2) {
             addCriterion("id not between", value1, value2, "id");
             return (Criteria) this;
         }
@@ -1652,6 +1652,126 @@ public class UserExample {
 
         public Criteria andModifyTimeNotBetween(Date value1, Date value2) {
             addCriterion("modify_time not between", value1, value2, "modifyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeIsNull() {
+            addCriterion("last_login_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeIsNotNull() {
+            addCriterion("last_login_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeEqualTo(Date value) {
+            addCriterion("last_login_time =", value, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeNotEqualTo(Date value) {
+            addCriterion("last_login_time <>", value, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeGreaterThan(Date value) {
+            addCriterion("last_login_time >", value, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("last_login_time >=", value, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeLessThan(Date value) {
+            addCriterion("last_login_time <", value, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeLessThanOrEqualTo(Date value) {
+            addCriterion("last_login_time <=", value, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeIn(List<Date> values) {
+            addCriterion("last_login_time in", values, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeNotIn(List<Date> values) {
+            addCriterion("last_login_time not in", values, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeBetween(Date value1, Date value2) {
+            addCriterion("last_login_time between", value1, value2, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastLoginTimeNotBetween(Date value1, Date value2) {
+            addCriterion("last_login_time not between", value1, value2, "lastLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountIsNull() {
+            addCriterion("login_count is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountIsNotNull() {
+            addCriterion("login_count is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountEqualTo(Integer value) {
+            addCriterion("login_count =", value, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountNotEqualTo(Integer value) {
+            addCriterion("login_count <>", value, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountGreaterThan(Integer value) {
+            addCriterion("login_count >", value, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("login_count >=", value, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountLessThan(Integer value) {
+            addCriterion("login_count <", value, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountLessThanOrEqualTo(Integer value) {
+            addCriterion("login_count <=", value, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountIn(List<Integer> values) {
+            addCriterion("login_count in", values, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountNotIn(List<Integer> values) {
+            addCriterion("login_count not in", values, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountBetween(Integer value1, Integer value2) {
+            addCriterion("login_count between", value1, value2, "loginCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("login_count not between", value1, value2, "loginCount");
             return (Criteria) this;
         }
     }

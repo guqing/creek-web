@@ -1,19 +1,9 @@
-package xyz.guqing.authorization.entity;
+package xyz.guqing.authorization.entity.model;
 
 public class SysRolePermission {
-    private Integer id;
-
     private Integer sysRoleId;
 
-    private Integer sysPermissionId;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private Long sysPermissionId;
 
     public Integer getSysRoleId() {
         return sysRoleId;
@@ -23,11 +13,11 @@ public class SysRolePermission {
         this.sysRoleId = sysRoleId;
     }
 
-    public Integer getSysPermissionId() {
+    public Long getSysPermissionId() {
         return sysPermissionId;
     }
 
-    public void setSysPermissionId(Integer sysPermissionId) {
+    public void setSysPermissionId(Long sysPermissionId) {
         this.sysPermissionId = sysPermissionId;
     }
 }

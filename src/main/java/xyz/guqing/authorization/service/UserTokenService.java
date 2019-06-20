@@ -2,8 +2,8 @@ package xyz.guqing.authorization.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xyz.guqing.authorization.entity.UserToken;
-import xyz.guqing.authorization.entity.UserTokenExample;
+import xyz.guqing.authorization.entity.dto.UserToken;
+import xyz.guqing.authorization.entity.dto.UserTokenExample;
 import xyz.guqing.authorization.mapper.UserTokenMapper;
 
 import java.util.Date;

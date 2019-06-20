@@ -1,8 +1,10 @@
-package xyz.guqing.authorization.entity;
+package xyz.guqing.authorization.entity.dto;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import xyz.guqing.authorization.entity.model.SysPermission;
+import xyz.guqing.authorization.entity.model.SysRole;
 
 import java.util.Collection;
 import java.util.HashSet;

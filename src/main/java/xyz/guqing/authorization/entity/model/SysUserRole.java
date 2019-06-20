@@ -1,25 +1,15 @@
-package xyz.guqing.authorization.entity;
+package xyz.guqing.authorization.entity.model;
 
 public class SysUserRole {
-    private Integer id;
-
-    private Integer sysUserId;
+    private Long sysUserId;
 
     private Integer sysRoleId;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getSysUserId() {
+    public Long getSysUserId() {
         return sysUserId;
     }
 
-    public void setSysUserId(Integer sysUserId) {
+    public void setSysUserId(Long sysUserId) {
         this.sysUserId = sysUserId;
     }
 

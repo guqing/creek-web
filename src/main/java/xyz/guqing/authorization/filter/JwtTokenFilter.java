@@ -8,7 +8,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import xyz.guqing.authorization.common.JwtTokenUtil;
-import xyz.guqing.authorization.entity.UserToken;
+import xyz.guqing.authorization.entity.dto.UserToken;
 import xyz.guqing.authorization.properties.MySecurityAutoConfiguration;
 import xyz.guqing.authorization.properties.TokenProperties;
 import xyz.guqing.authorization.service.MyUserDetailsService;

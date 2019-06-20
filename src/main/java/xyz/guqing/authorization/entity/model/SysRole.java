@@ -1,13 +1,13 @@
-package xyz.guqing.authorization.entity;
+package xyz.guqing.authorization.entity.model;
 
 import java.util.Date;
 
-public class UserToken {
+public class SysRole {
     private Integer id;
 
-    private String username;
+    private String name;
 
-    private String token;
+    private String available;
 
     private Date createTime;
 
@@ -21,20 +21,20 @@ public class UserToken {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    public String getToken() {
-        return token;
+    public String getAvailable() {
+        return available;
     }
 
-    public void setToken(String token) {
-        this.token = token == null ? null : token.trim();
+    public void setAvailable(String available) {
+        this.available = available == null ? null : available.trim();
     }
 
     public Date getCreateTime() {

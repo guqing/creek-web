@@ -2,15 +2,15 @@ package xyz.guqing.authorization.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
-import xyz.guqing.authorization.entity.UserToken;
-import xyz.guqing.authorization.entity.UserTokenExample;
+import xyz.guqing.authorization.entity.dto.UserToken;
+import xyz.guqing.authorization.entity.dto.UserTokenExample;
 
 public interface UserTokenMapper {
     int countByExample(UserTokenExample example);
 
     int deleteByExample(UserTokenExample example);
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     int insert(UserToken record);
 
@@ -18,7 +18,7 @@ public interface UserTokenMapper {
 
     List<UserToken> selectByExample(UserTokenExample example);
 
-    UserToken selectByPrimaryKey(Integer id);
+    UserToken selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") UserToken record, @Param("example") UserTokenExample example);
 

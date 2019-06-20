@@ -4,8 +4,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import xyz.guqing.authorization.entity.MyUserDetails;
-import xyz.guqing.authorization.entity.SysPermission;
+import xyz.guqing.authorization.entity.dto.MyUserDetails;
+import xyz.guqing.authorization.entity.model.SysPermission;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class RbacAuthorityService {
             // 这些 url 都是要登录后才能访问，且其他的 url 都不能访问
             List<SysPermission> permissionList = new ArrayList<>();
             SysPermission sysPermission = new SysPermission();
-            sysPermission.setId(1);
+            sysPermission.setId(1L);
             sysPermission.setName("hello");
             sysPermission.setUrl("/hello");
             permissionList.add(sysPermission);

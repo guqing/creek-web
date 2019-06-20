@@ -1,9 +1,9 @@
-package xyz.guqing.authorization.entity;
+package xyz.guqing.authorization.entity.model;
 
 import java.util.Date;
 
 public class User {
-    private Integer id;
+    private Long id;
 
     private String username;
 
@@ -17,7 +17,7 @@ public class User {
 
     private Integer roleId;
 
-    private String occupation;// 职业
+    private String occupation;
 
     private String company;
 
@@ -49,11 +49,15 @@ public class User {
 
     private Date modifyTime;
 
-    public Integer getId() {
+    private Date lastLoginTime;
+
+    private Integer loginCount;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -231,5 +235,21 @@ public class User {
 
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
+    }
+
+    public Date getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(Date lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+    }
+
+    public Integer getLoginCount() {
+        return loginCount;
+    }
+
+    public void setLoginCount(Integer loginCount) {
+        this.loginCount = loginCount;
     }
 }

@@ -7,8 +7,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import xyz.guqing.authorization.common.JwtTokenUtil;
 import xyz.guqing.authorization.common.ResponseUtil;
-import xyz.guqing.authorization.entity.MyUserDetails;
-import xyz.guqing.authorization.entity.UserToken;
+import xyz.guqing.authorization.entity.dto.MyUserDetails;
+import xyz.guqing.authorization.entity.dto.UserToken;
 import xyz.guqing.authorization.service.UserTokenService;
 
 import javax.servlet.ServletException;
