@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="xyz.guqing.authorization.mapper.UserTokenMapper" >
-  <resultMap id="BaseResultMap" type="xyz.guqing.authorization.entity.UserToken" >
+  <resultMap id="BaseResultMap" type="xyz.guqing.authorization.entity.dto.UserToken" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="token" property="token" jdbcType="VARCHAR" />
@@ -69,7 +69,7 @@
   <sql id="Base_Column_List" >
     id, username, token, create_time, modify_time
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="xyz.guqing.authorization.entity.UserTokenExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="xyz.guqing.authorization.entity.dto.UserTokenExample" >
     select
     <if test="distinct" >
       distinct
@@ -93,13 +93,13 @@
     delete from user_token
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="xyz.guqing.authorization.entity.UserTokenExample" >
+  <delete id="deleteByExample" parameterType="xyz.guqing.authorization.entity.dto.UserTokenExample" >
     delete from user_token
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="xyz.guqing.authorization.entity.UserToken" >
+  <insert id="insert" parameterType="xyz.guqing.authorization.entity.dto.UserToken" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -108,7 +108,7 @@
     values (#{username,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="xyz.guqing.authorization.entity.UserToken" >
+  <insert id="insertSelective" parameterType="xyz.guqing.authorization.entity.dto.UserToken" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -142,7 +142,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="xyz.guqing.authorization.entity.UserTokenExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="xyz.guqing.authorization.entity.dto.UserTokenExample" resultType="java.lang.Integer" >
     select count(*) from user_token
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -182,7 +182,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="xyz.guqing.authorization.entity.UserToken" >
+  <update id="updateByPrimaryKeySelective" parameterType="xyz.guqing.authorization.entity.dto.UserToken" >
     update user_token
     <set >
       <if test="username != null" >
@@ -200,7 +200,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="xyz.guqing.authorization.entity.UserToken" >
+  <update id="updateByPrimaryKey" parameterType="xyz.guqing.authorization.entity.dto.UserToken" >
     update user_token
     set username = #{username,jdbcType=VARCHAR},
       token = #{token,jdbcType=VARCHAR},

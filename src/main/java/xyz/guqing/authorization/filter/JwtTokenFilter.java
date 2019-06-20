@@ -8,7 +8,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import xyz.guqing.authorization.common.JwtTokenUtil;
-import xyz.guqing.authorization.entity.dto.UserToken;
+import xyz.guqing.authorization.common.UserTokenUtil;
 import xyz.guqing.authorization.properties.MySecurityAutoConfiguration;
 import xyz.guqing.authorization.properties.TokenProperties;
 import xyz.guqing.authorization.service.MyUserDetailsService;
@@ -28,6 +28,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserTokenUtil userTokenutil;
 
     @Autowired
     private UserTokenService userTokenService;
@@ -53,21 +55,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }else if(jwtTokenUtil.canTokenBeRefreshed(authToken)){
                     // token过期了，需要刷新token
-                    String newToken = generateTokenAndSetDB(userDetails);
+                    String newToken = userTokenutil.generateTokenAndSetDB(userDetails);
                     response.setHeader(tokenProperties.getHeaderString(), newToken);
                 }
             }
         }
         chain.doFilter(request, response);
-    }
-
-    private String generateTokenAndSetDB(UserDetails userDetails){
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        //将token写入数据库中
-        UserToken userToken = new UserToken();
-        userToken.setUsername(userDetails.getUsername());
-        userToken.setToken(token);
-        userTokenService.save(userToken);
-        return token;
     }
 }

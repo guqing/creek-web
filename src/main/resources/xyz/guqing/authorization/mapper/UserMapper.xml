@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="xyz.guqing.authorization.mapper.UserMapper" >
-  <resultMap id="BaseResultMap" type="xyz.guqing.authorization.entity.User" >
+  <resultMap id="BaseResultMap" type="xyz.guqing.authorization.entity.model.User" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="email" property="email" jdbcType="VARCHAR" />
@@ -91,7 +91,7 @@
     province, city, district, address, qq, wechat, github, weibo, gender, profile, status, 
     create_time, modify_time, last_login_time, login_count
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="xyz.guqing.authorization.entity.UserExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="xyz.guqing.authorization.entity.model.UserExample" >
     select
     <if test="distinct" >
       distinct
@@ -115,13 +115,13 @@
     delete from user
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="xyz.guqing.authorization.entity.UserExample" >
+  <delete id="deleteByExample" parameterType="xyz.guqing.authorization.entity.model.UserExample" >
     delete from user
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="xyz.guqing.authorization.entity.User" >
+  <insert id="insert" parameterType="xyz.guqing.authorization.entity.model.User" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -144,7 +144,7 @@
       #{modifyTime,jdbcType=TIMESTAMP}, #{lastLoginTime,jdbcType=TIMESTAMP}, #{loginCount,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="xyz.guqing.authorization.entity.User" >
+  <insert id="insertSelective" parameterType="xyz.guqing.authorization.entity.model.User" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -298,7 +298,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="xyz.guqing.authorization.entity.UserExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="xyz.guqing.authorization.entity.model.UserExample" resultType="java.lang.Integer" >
     select count(*) from user
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -418,7 +418,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="xyz.guqing.authorization.entity.User" >
+  <update id="updateByPrimaryKeySelective" parameterType="xyz.guqing.authorization.entity.model.User" >
     update user
     <set >
       <if test="username != null" >
@@ -496,7 +496,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="xyz.guqing.authorization.entity.User" >
+  <update id="updateByPrimaryKey" parameterType="xyz.guqing.authorization.entity.model.User" >
     update user
     set username = #{username,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},

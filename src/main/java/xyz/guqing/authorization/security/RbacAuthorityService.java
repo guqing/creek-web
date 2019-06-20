@@ -18,7 +18,7 @@ public class RbacAuthorityService {
     public boolean hasPermission(HttpServletRequest request, Authentication authentication) {
 
         Object principal = authentication.getPrincipal();
-
+        System.out.println(principal);
         boolean hasPermission  = false;
         
         if (principal instanceof MyUserDetails) {
@@ -27,12 +27,8 @@ public class RbacAuthorityService {
 
             //获取资源
             // 这些 url 都是要登录后才能访问，且其他的 url 都不能访问
-            List<SysPermission> permissionList = new ArrayList<>();
-            SysPermission sysPermission = new SysPermission();
-            sysPermission.setId(1L);
-            sysPermission.setName("hello");
-            sysPermission.setUrl("/hello");
-            permissionList.add(sysPermission);
+            List<SysPermission> permissionList = myUserDetails.getPermissions();
+
             //获取权限url
             Set<String> urls = new HashSet<>();
             for(SysPermission permission : permissionList){

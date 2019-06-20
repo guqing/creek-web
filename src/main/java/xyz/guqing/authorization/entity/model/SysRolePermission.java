@@ -1,6 +1,8 @@
 package xyz.guqing.authorization.entity.model;
 
-public class SysRolePermission {
+import java.io.Serializable;
+
+public class SysRolePermission implements Serializable {
     private Integer sysRoleId;
 
     private Long sysPermissionId;

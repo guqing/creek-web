@@ -1,6 +1,7 @@
 package xyz.guqing.authorization.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import xyz.guqing.authorization.entity.dto.UserToken;
 import xyz.guqing.authorization.entity.dto.UserTokenExample;
@@ -36,12 +37,13 @@ public class UserTokenService {
         return userTokenMapper.updateByExampleSelective(token,example);
     }
 
+    @Cacheable(cacheNames="tokenCache",key="#username")
     public UserToken findByUsername(String username){
         UserTokenExample example = new UserTokenExample();
         UserTokenExample.Criteria criteria = example.createCriteria();
         criteria.andUsernameEqualTo(username);
         List<UserToken> tokenList = userTokenMapper.selectByExample(example);
-        if(tokenList != null){
+        if(tokenList != null && tokenList.size()>0){
             return tokenList.get(0);
         }
         return null;

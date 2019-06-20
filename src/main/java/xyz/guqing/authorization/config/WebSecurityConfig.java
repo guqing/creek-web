@@ -27,9 +27,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     AjaxAuthenticationEntryPoint authenticationEntryPoint;  //  未登陆时返回 JSON 格式的数据给前端（否则为 html）
 
     @Autowired
-    AjaxAuthenticationSuccessHandler authenticationSuccessHandler;  // 登录成功返回的 JSON 格式数据给前端（否则为 html）
-
-    @Autowired
     AjaxAuthenticationFailureHandler authenticationFailureHandler;  //  登录失败返回的 JSON 格式数据给前端（否则为 html）
 
     @Autowired
@@ -62,6 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure( HttpSecurity httpSecurity ) throws Exception {
         LoginProperties loginProperties = securityAutoConfiguration.getLoginProperties();
+
         httpSecurity.cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 使用 JWT，关闭token
                 .and()
@@ -70,15 +68,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.GET, // 允许对于网站静态资源的无授权访问
+                        "/",
+                        "/*.html",
+                        "/favicon.ico",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js",
+                        "/swagger-resources/**",
+                        "/v2/api-docs/**"
+                ).permitAll()
+
+                .antMatchers("/auth/login", "/oauth/register")// 对登录注册要允许匿名访问
+                .permitAll()
 
                 .anyRequest()
                 .access("@rbacauthorityservice.hasPermission(request,authentication)") // RBAC 动态 url 认证
-
-                .and()
-                .formLogin().loginProcessingUrl(loginProperties.getLoginUrl())  //开启登录
-                .successHandler(authenticationSuccessHandler) // 登录成功
-                .failureHandler(authenticationFailureHandler) // 登录失败
-                .permitAll()
 
                 .and()
                 .logout().logoutUrl(loginProperties.getLogoutUrl())

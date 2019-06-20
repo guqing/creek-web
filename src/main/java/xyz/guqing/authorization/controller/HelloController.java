@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 public class HelloController {
     @RequestMapping("/hello")
@@ -20,4 +21,5 @@ public class HelloController {
     public String denie(){
         return "我是没有权限访问的资源";
     }
+
 }

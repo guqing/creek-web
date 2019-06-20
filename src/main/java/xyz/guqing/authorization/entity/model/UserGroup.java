@@ -1,8 +1,9 @@
 package xyz.guqing.authorization.entity.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class UserGroup {
+public class UserGroup implements Serializable {
     private Integer id;
 
     private String name;
