@@ -1,2 +1,3 @@
-# authentication-server
-使用springboot+springsecurity+mybatis开发的认证和授权服务端，可以配合springcloud在网关做认证授权
+# creek
+## 说明
+Spring boot + Spring Security + Jwt 前后端分离权限管理系统
