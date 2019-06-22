@@ -8,7 +8,6 @@ import xyz.guqing.authorization.entity.dto.MyUserDetails;
 import xyz.guqing.authorization.entity.model.SysPermission;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +17,6 @@ public class RbacAuthorityService {
     public boolean hasPermission(HttpServletRequest request, Authentication authentication) {
 
         Object principal = authentication.getPrincipal();
-        System.out.println(principal);
         boolean hasPermission  = false;
         
         if (principal instanceof MyUserDetails) {

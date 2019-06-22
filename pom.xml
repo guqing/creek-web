@@ -9,11 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>xyz.guqing</groupId>
-    <artifactId>authorization-server</artifactId>
+    <artifactId>creek-web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>authorization-server</name>
-    <description>springsecurity 权限管理系统</description>
+    <name>creek-web</name>
+    <description>spring security 权限管理系统</description>
 
     <properties>
         <java.version>1.8</java.version>
