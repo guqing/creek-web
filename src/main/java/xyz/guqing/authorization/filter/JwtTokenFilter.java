@@ -12,7 +12,6 @@ import xyz.guqing.authorization.common.UserTokenUtil;
 import xyz.guqing.authorization.properties.MySecurityAutoConfiguration;
 import xyz.guqing.authorization.properties.TokenProperties;
 import xyz.guqing.authorization.service.MyUserDetailsService;
-import xyz.guqing.authorization.service.UserTokenService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,9 +29,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UserTokenUtil userTokenutil;
-
-    @Autowired
-    private UserTokenService userTokenService;
 
     @Autowired
     MySecurityAutoConfiguration securityProperties;

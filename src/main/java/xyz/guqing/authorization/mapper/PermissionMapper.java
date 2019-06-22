@@ -10,6 +10,6 @@ import java.util.List;
 @Mapper
 public interface PermissionMapper {
 
-    @Select("SELECT * FROM sys_role r LEFT JOIN sys_role_permission rp on rp.sys_role_id=r.id LEFT JOIN sys_permission p on p.id=rp.sys_permission_id WHERE r.id=#{roleId}")
+    @Select("SELECT p.* FROM sys_role r LEFT JOIN sys_role_permission rp on rp.sys_role_id=r.id JOIN sys_permission p on p.id=rp.sys_permission_id WHERE r.id=#{roleId}")
     List<SysPermission> queryPermissionByRoleIds(@Param("roleId") Integer roleId);
 }

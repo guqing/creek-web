@@ -4,7 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "auth.security.token")
 public class TokenProperties {
-    private long expirationTime = 432_000_000;     // 5天(以毫秒ms计)
+    private long expirationTime = 30;     //30分钟(以秒ms计)1_800_000 5天为432_000_000
+    private long allowedClockSkewSeconds = 30;
     private String secret = "CodeSheepSecret";      // JWT密码
     private String tokenPrefix = "Bearer";         // Token前缀
     private String headerString = "Authorization"; // 存放Token的Header Key
@@ -39,5 +40,13 @@ public class TokenProperties {
 
     public void setHeaderString(String headerString) {
         this.headerString = headerString;
+    }
+
+    public long getAllowedClockSkewSeconds() {
+        return allowedClockSkewSeconds;
+    }
+
+    public void setAllowedClockSkewSeconds(long allowedClockSkewSeconds) {
+        this.allowedClockSkewSeconds = allowedClockSkewSeconds;
     }
 }

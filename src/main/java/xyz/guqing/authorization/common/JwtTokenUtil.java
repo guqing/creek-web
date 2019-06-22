@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import xyz.guqing.authorization.entity.dto.MyUserDetails;
-import xyz.guqing.authorization.entity.dto.UserToken;
 import xyz.guqing.authorization.properties.MySecurityAutoConfiguration;
 import xyz.guqing.authorization.properties.TokenProperties;
-import xyz.guqing.authorization.service.UserTokenService;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,8 +17,6 @@ import java.util.Map;
 
 @Component
 public class JwtTokenUtil implements Serializable {
-    @Autowired
-    private UserTokenService userTokenService;
     @Autowired
     MySecurityAutoConfiguration securityProperties;
 
@@ -67,12 +63,14 @@ public class JwtTokenUtil implements Serializable {
         Claims claims;
         try {
             claims = Jwts.parser()
+                    .setAllowedClockSkewSeconds(tokenProperties.getAllowedClockSkewSeconds())
                     .setSigningKey(tokenProperties.getSecret())
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
             claims = null;
         }
+
         return claims;
     }
 
@@ -83,7 +81,12 @@ public class JwtTokenUtil implements Serializable {
 
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+        if(expiration != null) {
+            //判断是否过期
+            return expiration.before(new Date());
+        }
+        //获取不到expiration肯定过期
+        return true;
     }
 
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
@@ -107,7 +110,13 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public Boolean canTokenBeRefreshed(String token) {
-        return !isTokenExpired(token);
+        final Date expiration = getExpirationDateFromToken(token);
+        if(expiration != null && expiration.before(new Date())) {
+            //判断是否可以刷新
+            return true;
+        }
+        //获取不到expiration肯定过期并且不能刷新
+        return false;
     }
 
     public String refreshToken(String token) {
@@ -125,20 +134,10 @@ public class JwtTokenUtil implements Serializable {
     public Boolean validateToken(String token, UserDetails userDetails) {
         MyUserDetails myUserDetails = (MyUserDetails) userDetails;
         final String username = getUsernameFromToken(token);
-        UserToken userToken = userTokenService.findByUsername(myUserDetails.getUsername());
-        //数据库中存放的token与前端传递的token对比
-        String dbToken = userToken.getToken();
-        if(token != null){
-            //先去除两端的空格
-            token = token.trim();
-        }
-        if(username.equals(myUserDetails.getUsername()) && dbToken.equals(token) && !isTokenExpired(token)){
-            return true;
-        }
-        return false;
-//        return (
-//                username.equals(myUserDetails.getUsername())
-//                        && !isTokenExpired(token)
-//        );
+
+        return (
+                username.equals(myUserDetails.getUsername())
+                        && !isTokenExpired(token)
+        );
     }
 }
