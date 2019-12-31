@@ -1,8 +1,5 @@
 <template>
-  <a-card
-    :bordered="false"
-    class="permission-wrapper"
-  >
+  <a-card :bordered="false" class="permission-wrapper">
     <a-row :gutter="8">
       <a-col :span="8">
         <s-tree
@@ -12,10 +9,7 @@
         ></s-tree>
       </a-col>
       <a-col :span="16">
-        <a-form
-          layout="horizontal"
-          :form="permissionForm"
-        >
+        <a-form layout="horizontal" :form="permissionForm">
           <a-form-item
             label="昵称"
             :label-col="formLayoutOptions.labelCol"
@@ -28,10 +22,7 @@
             :label-col="formLayoutOptions.labelCol"
             :wrapper-col="formLayoutOptions.wrapperCol"
           >
-            <a-textarea
-              rows="4"
-              placeholder="You are not alone."
-            />
+            <a-textarea rows="4" placeholder="You are not alone." />
           </a-form-item>
 
           <a-form-item
@@ -72,8 +63,7 @@
 <script>
 import { STable } from '@/components'
 import STree from '@/components/Tree/Tree'
-import { getOrgTree, getServiceList } from '@/api/manage'
-import PermissionModal from './modules/PermissionModal'
+import { getOrgTree } from '@/api/manage'
 export default {
   name: 'TreeList',
   components: {
@@ -92,7 +82,7 @@ export default {
 
       // 查询参数
       queryParam: {},
-      
+
       orgTree: [],
       selectedRowKeys: [],
       selectedRows: []
