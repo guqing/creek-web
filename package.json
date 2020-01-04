@@ -74,6 +74,7 @@
     "rules": {
       "generator-star-spacing": "off",
       "no-mixed-operators": 0,
+      "space-before-function-paren": 0,
       "vue/max-attributes-per-line": [
         2,
         {
