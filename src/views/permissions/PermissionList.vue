@@ -63,9 +63,10 @@
 <script>
 import { STable } from '@/components'
 import STree from '@/components/Tree/Tree'
-import { getOrgTree } from '@/api/manage'
+import permissonApi from '@/api/permission'
+
 export default {
-  name: 'TreeList',
+  name: 'PermissionList',
   components: {
     STable,
     STree
@@ -89,7 +90,7 @@ export default {
     }
   },
   created () {
-    getOrgTree().then(res => {
+    permissonApi.listAll().then(res => {
       console.log(res.result)
       this.orgTree = res.result
     })

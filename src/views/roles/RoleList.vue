@@ -5,7 +5,7 @@
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
             <a-form-item label="角色名称">
-              <a-input placeholder="请输入"/>
+              <a-input placeholder="请输入" />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
@@ -31,25 +31,26 @@
       <a-button type="primary" icon="plus">新建</a-button>
     </div>
 
-    <s-table
-      ref="table"
-      size="default"
-      :columns="columns"
-      :data="loadData"
-    >
-      <div
-        slot="expandedRowRender"
-        slot-scope="record"
-        style="margin: 0">
-        <a-row
-          :gutter="24"
-          :style="{ marginBottom: '12px' }">
-          <a-col :span="12" v-for="(role, index) in record.permissions" :key="index" :style="{ marginBottom: '12px' }">
+    <a-table :columns="columns" :dataSource="roles" :pagination="pagination">
+      <div slot="expandedRowRender" slot-scope="record" style="margin: 0">
+        <a-row :gutter="24" :style="{ marginBottom: '12px' }">
+          <a-col
+            :span="12"
+            v-for="(role, index) in record.permissions"
+            :key="index"
+            :style="{ marginBottom: '12px' }"
+          >
             <a-col :span="4">
-              <span>{{ role.permissionName }}：</span>
+              <span>{{ role.name }}：</span>
             </a-col>
-            <a-col :span="20" v-if="role.actionEntitySet.length > 0">
-              <a-tag color="cyan" v-for="(action, k) in role.actionEntitySet" :key="k">{{ action.describe }}</a-tag>
+            <a-col :span="20" v-if="role.resources.length > 0">
+              <a-tag
+                color="cyan"
+                v-for="(action, k) in role.resources"
+                :key="k"
+              >
+                {{ action.action }}
+              </a-tag>
             </a-col>
             <a-col :span="20" v-else>-</a-col>
           </a-col>
@@ -59,9 +60,7 @@
         <a @click="$refs.modal.edit(record)">编辑</a>
         <a-divider type="vertical" />
         <a-dropdown>
-          <a class="ant-dropdown-link">
-            更多 <a-icon type="down" />
-          </a>
+          <a class="ant-dropdown-link"> 更多 <a-icon type="down" /> </a>
           <a-menu slot="overlay">
             <a-menu-item>
               <a href="javascript:;">详情</a>
@@ -75,19 +74,20 @@
           </a-menu>
         </a-dropdown>
       </span>
-    </s-table>
+    </a-table>
 
     <role-modal ref="modal" @ok="handleOk"></role-modal>
-
   </a-card>
 </template>
 
 <script>
 import { STable } from '@/components'
 import RoleModal from './modules/RoleModal'
+import roleAPI from '@/api/role'
+import moment from 'moment'
 
 export default {
-  name: 'TableList',
+  name: 'RoleList',
   components: {
     STable,
     RoleModal
@@ -105,6 +105,12 @@ export default {
       advanced: false,
       // 查询参数
       queryParam: {},
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0
+      },
+
       // 表头
       columns: [
         {
@@ -117,11 +123,17 @@ export default {
         },
         {
           title: '状态',
-          dataIndex: 'status'
+          dataIndex: 'status',
+          customRender: function (text, value) {
+            return text === 1 ? '正常' : '禁用'
+          }
         },
         {
           title: '创建时间',
           dataIndex: 'createTime',
+          customRender: function (text, value) {
+            return moment().format('YYYY-MM-DD')
+          },
           sorter: true
         }, {
           title: '操作',
@@ -130,23 +142,25 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        return this.$http.get('/role', {
-          params: Object.assign(parameter, this.queryParam)
-        }).then(res => {
-          return res.result
-        })
-      },
+      roles: [],
 
       selectedRowKeys: [],
       selectedRows: []
     }
   },
+  created () {
+    this.loadRole()
+  },
   methods: {
+    loadRole () {
+      roleAPI.list(this.pagination).then(res => {
+        this.roles = res.data.list
+        this.pagination.total = res.data.total
+      })
+    },
     handleEdit (record) {
       this.mdl = Object.assign({}, record)
-
+      console.log(record)
       this.mdl.permissions.forEach(permission => {
         permission.actionsOptions = permission.actionEntitySet.map(action => {
           return { label: action.describe, value: action.action, defaultCheck: action.defaultCheck }
@@ -167,20 +181,6 @@ export default {
     toggleAdvanced () {
       this.advanced = !this.advanced
     }
-  },
-  watch: {
-    /*
-      'selectedRows': function (selectedRows) {
-        this.needTotalList = this.needTotalList.map(item => {
-          return {
-            ...item,
-            total: selectedRows.reduce( (sum, val) => {
-              return sum + val[item.dataIndex]
-            }, 0)
-          }
-        })
-      }
-      */
   }
 }
 </script>
