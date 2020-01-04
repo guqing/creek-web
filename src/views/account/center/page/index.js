@@ -1,5 +1,4 @@
-import AppPage from './App'
-import ArticlePage from './Article'
-import ProjectPage from './Project'
+import BaseSetting from './BaseSetting'
+import PasswordPage from './PasswordPage'
 
-export { AppPage, ArticlePage, ProjectPage }
+export { BaseSetting, PasswordPage }
