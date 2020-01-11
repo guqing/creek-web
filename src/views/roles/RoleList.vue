@@ -31,7 +31,12 @@
       <a-button type="primary" icon="plus">新建</a-button>
     </div>
 
-    <a-table :columns="columns" :dataSource="roles" :pagination="pagination">
+    <a-table
+      :columns="columns"
+      :dataSource="roles"
+      :pagination="pagination"
+      rowKey="id"
+    >
       <div slot="expandedRowRender" slot-scope="record" style="margin: 0">
         <a-row :gutter="24" :style="{ marginBottom: '12px' }">
           <a-col
@@ -83,7 +88,7 @@
 <script>
 import { STable } from '@/components'
 import RoleModal from './modules/RoleModal'
-import roleAPI from '@/api/role'
+import roleApi from '@/api/role'
 import moment from 'moment'
 
 export default {
@@ -153,7 +158,7 @@ export default {
   },
   methods: {
     loadRole () {
-      roleAPI.list(this.pagination).then(res => {
+      roleApi.list(this.pagination).then(res => {
         this.roles = res.data.list
         this.pagination.total = res.data.total
       })

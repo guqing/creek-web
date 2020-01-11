@@ -10,4 +10,11 @@ roleApi.list = function(parameter) {
   })
 }
 
+roleApi.count = function() {
+  return axios({
+    url: '/role/count',
+    method: 'get'
+  })
+}
+
 export default roleApi

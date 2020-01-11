@@ -91,8 +91,15 @@ export default {
   },
   created () {
     permissonApi.listAll().then(res => {
-      console.log(res.result)
-      this.orgTree = res.result
+      var permissions = res.data.list
+      var permissionTree = []
+      permissions.forEach(element => {
+        var permission = {}
+        permission.name = element.name
+        permission.children = element.actionEntitySet
+        permissionTree.push(permission)
+      })
+      this.orgTree = permissions
     })
   },
   watch: {

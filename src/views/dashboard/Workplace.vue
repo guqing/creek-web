@@ -43,22 +43,32 @@
             </div>
           </a-card>
 
-          <a-card :loading="loading" title="日志" :bordered="false">
-            <a-list>
-              <a-list-item :key="index" v-for="(item, index) in activities">
-                <a-list-item-meta>
+          <a-card title="日志" :bordered="false">
+            <a-list itemLayout="horizontal" :dataSource="activities">
+              <a-list-item
+                slot="renderItem"
+                slot-scope="item, index"
+                :key="index"
+              >
+                <template slot="actions">
+                  <div>{{ item.createTime | timeAgo }}</div>
+                </template>
+                <a-list-item-meta :description="item.content">
                   <a-avatar slot="avatar" :src="item.user.avatar" />
                   <div slot="title">
                     <span>{{ item.user.nickname }}</span
-                    >&nbsp; 在&nbsp; <a href="#">{{ item.project.name }}</a
-                    >&nbsp; <span>{{ item.project.action }}</span
                     >&nbsp;
-                    <a href="#">{{ item.project.event }}</a>
+                    <a href="#">{{ item.name }}</a>
                   </div>
-                  <div slot="description">{{ item.time }}</div>
                 </a-list-item-meta>
               </a-list-item>
             </a-list>
+            <a-pagination
+              @change="onPageChange"
+              v-model="pagination.current"
+              :total="pagination.total"
+              style="text-align:right;"
+            />
           </a-card>
         </a-col>
       </a-row>
@@ -73,7 +83,8 @@ import { mapGetters } from 'vuex'
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
 
-import { getRoleList, getServiceList } from '@/api/manage'
+import dashboardApi from '@/api/dashboard'
+import moment from 'moment'
 
 export default {
   name: 'Workplace',
@@ -88,8 +99,14 @@ export default {
       user: {},
 
       myCountDashboard: [],
+      projectsCount: {},
       activities: [],
-      loading: true
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0
+      },
+      loading: false
     }
   },
   computed: {
@@ -100,42 +117,87 @@ export default {
   created () {
     this.user = this.userInfo
     this.avatar = this.userInfo.avatar
-    getRoleList().then(res => {
-      console.log('workplace -> call getRoleList()', res)
-    })
-
-    getServiceList().then(res => {
-      console.log('workplace -> call getServiceList()', res)
-    })
   },
   mounted () {
     this.getProjects()
+    this.loadLog()
   },
   methods: {
     ...mapGetters(['nickname', 'welcome']),
     getProjects () {
-      this.myCountDashboard = [
-        {
-          id: 1,
-          title: '用户',
-          icon: '/dashboard/user.png',
-          count: 1
-        },
-        {
-          id: 2,
-          title: '用户组',
-          icon: '/dashboard/usergroup.png',
-          count: 1
-        },
-        {
-          id: 3,
-          title: 'RAM角色',
-          icon: '/dashboard/RAM.png',
-          count: 2
-        }
-      ]
+      this.loading = true
+      this.loadData().then(res => {
+        this.myCountDashboard = [
+          {
+            id: 1,
+            title: '用户',
+            icon: '/dashboard/user.png',
+            count: res.userCount
+          },
+          {
+            id: 2,
+            title: '用户组',
+            icon: '/dashboard/usergroup.png',
+            count: 1
+          },
+          {
+            id: 3,
+            title: 'RAM角色',
+            icon: '/dashboard/RAM.png',
+            count: res.roleCount
+          }
+        ]
+      })
+
       this.loading = false
+    },
+    loadData () {
+      return new Promise((resolve, reject) => {
+        dashboardApi.countRam().then(res => {
+          resolve(res.data)
+        }).catch(callback => {
+          reject(callback)
+        })
+      })
+    },
+    loadLog () {
+      dashboardApi.listLogByPage(this.pagination).then(res => {
+        this.activities = res.data.list
+        this.pagination.total = res.data.total
+      })
+    },
+    onPageChange () {
+      this.loadLog()
     }
+  },
+  filters: {
+    timeAgo (time) {
+      var currentTime = new Date().getTime()
+      var between = currentTime - time
+      var days = Math.floor(between / (24 * 3600 * 1000))
+      if (days === 0) {
+        var leave1 = between % (24 * 3600 * 1000)
+        var hours = Math.floor(leave1 / (3600 * 1000))
+        if (hours === 0) {
+          var leave2 = leave1 % (3600 * 1000)
+          var minutes = Math.floor(leave2 / (60 * 1000))
+          if (minutes === 0) {
+            var leave3 = leave2 % (60 * 1000)
+            var seconds = Math.round(leave3 / 1000)
+            return seconds + ' 秒前'
+          }
+          return minutes + ' 分钟前'
+        }
+        return hours + ' 小时前'
+      }
+      if (days < 0) return '刚刚'
+      if (days < 5) {
+        return days + ' 天前'
+      } else {
+        return moment(time).format('YYYY-MM-DD HH:mm')
+      }
+    }
+
   }
 }
 </script>
