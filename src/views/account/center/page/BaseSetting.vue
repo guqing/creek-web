@@ -4,7 +4,7 @@
       <a-col :md="24" :lg="16">
         <a-form layout="vertical">
           <a-form-item label="昵称" :required="true">
-            <a-input placeholder="给自己起个名字" v-model="user.name" />
+            <a-input placeholder="给自己起个名字" v-model="user.nickname" />
           </a-form-item>
           <a-form-item label="Bio">
             <a-textarea
@@ -71,12 +71,9 @@ export default {
     ...mapActions(['GetInfo']),
 
     loadUser () {
-      // userApi.getBaseUserInfo().then(res => {
-      //   console.log('base user info:', res)
-      //   if (res.code === 0) {
-      //     this.user = res.data
-      //   }
-      // })
+      this.GetInfo().then(res => {
+        this.user = res
+      })
     },
 
     handleBeforeUpload (file) {
@@ -86,7 +83,7 @@ export default {
     },
 
     handleUpdateUserInfo () {
-      if (this.user.name === '') {
+      if (this.user.nickname === '') {
         this.$message.warning('昵称不能为空')
         return
       }
