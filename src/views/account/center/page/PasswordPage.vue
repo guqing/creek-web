@@ -2,13 +2,25 @@
   <div class="account-settings-info-view">
     <a-row :gutter="16">
       <a-col :md="24" :lg="16">
+        <a-alert
+          message="你还没有初始密码,可以在此设置初始密码"
+          type="success"
+          v-if="!hasOldPassword"
+          style="margin-bottom: 15px;"
+        />
         <a-form layout="vertical" :form="form">
-          <a-form-item label="原始密码">
+          <a-form-item label="原始密码" v-if="hasOldPassword">
             <a-input-password
               v-decorator="[
                 'oldPassword',
                 {
-                  rules: [{ required: true, message: '请输入原始密码', whitespace: false }]
+                  rules: [
+                    {
+                      required: hasOldPassword,
+                      message: '请输入原始密码',
+                      whitespace: false
+                    }
+                  ]
                 }
               ]"
             />
@@ -71,17 +83,25 @@ export default {
       confirmDirty: false,
       userId: this.$store.state.user.info.id,
       confirmPassword: '',
-      validateMessage: {}
+      validateMessage: {},
+      hasOldPassword: true
     }
   },
   beforeCreate () {
     this.form = this.$form.createForm(this, { name: 'updatePassword' })
   },
+  created () {
+    this.loadHasOldPassword()
+  },
   methods: {
+    loadHasOldPassword () {
+      userApi.hasOldPassword().then(res => {
+        this.hasOldPassword = res.data
+      })
+    },
     handleSubmit (e) {
       this.form.validateFieldsAndScroll((err, values) => {
         const user = {
-          id: this.userId,
           oldPassword: values.oldPassword,
           newPassword: values.newPassword
         }
@@ -116,7 +136,7 @@ export default {
       userApi
         .updatePassword(formValues)
         .then(res => {
-          if (res.code === 402) {
+          if (res.code === 401) {
             this.$message.warning('原始密码输入有误，请重新输入')
           } else if (res.code === 0) {
             // 重置form表单
