@@ -1,4 +1,4 @@
-export const setDocumentTitle = function (title) {
+export const setDocumentTitle = function(title) {
   document.title = title
   const ua = navigator.userAgent
   // eslint-disable-next-line
@@ -7,8 +7,8 @@ export const setDocumentTitle = function (title) {
     const i = document.createElement('iframe')
     i.src = '/favicon.ico'
     i.style.display = 'none'
-    i.onload = function () {
-      setTimeout(function () {
+    i.onload = function() {
+      setTimeout(function() {
         i.remove()
       }, 9)
     }
@@ -16,4 +16,4 @@ export const setDocumentTitle = function (title) {
   }
 }
 
-export const domTitle = 'Ant Design Pro'
+export const domTitle = 'Spring Boot Jpa Starter'

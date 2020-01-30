@@ -6,7 +6,7 @@
         {{ timeFix }}，{{ user.nickname }}
         <span class="welcome-text">，{{ welcome() }}</span>
       </div>
-      <div>前端工程师 | 蚂蚁金服 - 某某某事业群 - VUE平台</div>
+      <div>人间四月芳菲尽，山寺桃花始盛开。</div>
     </div>
     <div>
       <a-row :gutter="24">
