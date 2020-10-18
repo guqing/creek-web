@@ -1,33 +1,37 @@
-import Vue from 'vue'
 import axios from 'axios'
 import store from '@/store'
-import { VueAxios } from './axios'
+import storage from 'store'
 import notification from 'ant-design-vue/es/notification'
+import { VueAxios } from './axios'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 // 创建 axios 实例
-const service = axios.create({
-  baseURL: 'http://localhost:8081', // api base_url
+const request = axios.create({
+  // API 请求的默认前缀
+  baseURL: process.env.VUE_APP_API_BASE_URL,
   timeout: 6000 // 请求超时时间
 })
 
-const err = error => {
-  if (error.response) {
-    const data = error.response.data
-    const token = Vue.ls.get(ACCESS_TOKEN)
-    if (error.response.status === 403) {
+// 网关路径前缀
+const GATEWAY_PATH = '/route/auth'
+
+// 异常拦截处理器
+const errorHandler = (error) => {
+  console.log('请求异常:', error.response)
+  const res = error.response
+  if (res) {
+    const data = res.data
+    // 从 localstorage 获取 token
+    const token = storage.get(ACCESS_TOKEN)
+    if (data.dcode === 'A0320') {
       notification.error({
         message: 'Forbidden',
         description: data.message
       })
-    }
-    if (
-      error.response.status === 401 &&
-      !(data.result && data.result.isLogin)
-    ) {
+    } else if (data.code === 'A0300') {
       notification.error({
         message: 'Unauthorized',
-        description: 'Authorization verification failed'
+        description: '授权失败，请重新登录'
       })
       if (token) {
         store.dispatch('Logout').then(() => {
@@ -36,44 +40,62 @@ const err = error => {
           }, 1500)
         })
       }
+    } if (res.status === 401 && isGateWayRequest(res.config.url)) {
+      notification.error({
+        message: 'Unauthorized',
+        description: '认证已失效，请重新认证'
+      })
+    } if (res.status === 403 && isGateWayRequest(res.config.url)) {
+      notification.error({
+        message: 'Forbidden',
+        description: '抱歉，你无此操作权限，禁止访问'
+      })
+    } else {
+      notification.error({
+        message: '请求失败',
+        description: data.message
+      })
     }
   }
   return Promise.reject(error)
 }
 
 // request interceptor
-service.interceptors.request.use(config => {
-  const token = Vue.ls.get(ACCESS_TOKEN)
-  if (token) {
-    config.headers['Authorization'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+request.interceptors.request.use(config => {
+  const gatewayToken = store.getters.gatewayToken
+  if (gatewayToken && isGateWayRequest(config.url)) {
+    // 网关服务请求带网关的token
+    config.headers['Authorization'] = 'bearer ' + gatewayToken
+  } else {
+    const token = storage.get(ACCESS_TOKEN)
+    if (token) {
+      // 其他请求带认证服务器的token
+      config.headers['Authorization'] = 'bearer ' + token.access_token
+    }
   }
+
   return config
-}, err)
+}, errorHandler)
 
 // response interceptor
-service.interceptors.response.use(response => {
-  // 在这里检查后端是否有携带token在response中，如果有设置给token
-  const token = response.headers['authorization']
-  if (token) {
-    // 让每个请求携带自定义 token 请根据实际情况自行修改
-    Vue.ls.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
-    store.commit('SET_TOKEN', token)
-  }
-
-  if (response.data.code === 506) {
-    notification.error({
-      message: '没有权限,请刷新页面后重试',
-      description: response.data.message
-    })
-  }
+request.interceptors.response.use((response) => {
   return response.data
-}, err)
+}, errorHandler)
 
 const installer = {
   vm: {},
-  install(Vue) {
-    Vue.use(VueAxios, service)
+  install (Vue) {
+    Vue.use(VueAxios, request)
   }
 }
 
-export { installer as VueAxios, service as axios }
+function isGateWayRequest (url) {
+  return url.startsWith(GATEWAY_PATH)
+}
+
+export default request
+
+export {
+  installer as VueAxios,
+  request as axios
+}

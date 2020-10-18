@@ -1,4 +1,3 @@
-import api from './index'
 import { axios } from '@/utils/request'
 
 /**
@@ -12,52 +11,59 @@ import { axios } from '@/utils/request'
  * @param parameter
  * @returns {*}
  */
-export function login(parameter) {
+export function login (parameter) {
   return axios({
-    url: '/auth/login',
+    url: '/authorize/token',
     method: 'post',
     data: parameter
   })
 }
 
-export var oauthLoginApi = axios.defaults.baseURL + `/auth/login/`
-
-export function getSmsCaptcha(parameter) {
+export function bindSocial (parameter) {
   return axios({
-    url: api.SendSms,
+    url: '/social/bind',
     method: 'post',
     data: parameter
   })
 }
 
-export function getInfo() {
+export function unbindSocial (parameter) {
   return axios({
-    url: '/user/info',
+    url: `/social/unbind/${parameter}`,
+    method: 'post'
+  })
+}
+
+export function socailSignLogin (parameter) {
+  return axios({
+    url: '/social/sign/login',
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function listSupportSocail () {
+  return axios({
+    url: '/social/list',
+    method: 'get'
+  })
+}
+
+export function listUserConnectedSocail () {
+  return axios({
+    url: '/social/providers',
+    method: 'get'
+  })
+}
+
+export var socialLoginApi = axios.defaults.baseURL + `/social/login`
+
+export function getInfo () {
+  return axios({
+    url: '/authorize/user',
     method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
-  })
-}
-
-export function logout() {
-  return axios({
-    url: '/auth/logout',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
-  })
-}
-
-/**
- * get user 2step code open?
- * @param parameter {*}
- */
-export function get2step(parameter) {
-  return axios({
-    url: api.twoStepCode,
-    method: 'post',
-    data: parameter
   })
 }

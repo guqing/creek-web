@@ -1,45 +1,36 @@
 <template>
-  <div id="userLayout" :class="['user-layout-wrapper', device]">
+  <div id="userLayout" :class="['user-layout-wrapper', isMobile && 'mobile']">
     <div class="container">
       <div class="top">
         <div class="header">
           <a href="/">
             <img src="~@/assets/logo.svg" class="logo" alt="logo" />
-            <span class="title">Spring Boot Jpa Starter</span>
+            <span class="title">Creek</span>
           </a>
         </div>
-        <div class="desc">
-          Spring Boot Jpa Starter 是一个基于RBAC的项目脚手架模板
-        </div>
+        <div class="desc">Creek 快速开发脚手架</div>
       </div>
 
-      <route-view></route-view>
+      <router-view />
 
-      <!-- <div class="footer">
+      <div class="footer">
         <div class="links">
           <a href="_self">帮助</a>
           <a href="_self">隐私</a>
           <a href="_self">条款</a>
         </div>
-        <div class="copyright">
-          Copyright &copy; 2020 xxx技术组出品
-        </div>
-      </div> -->
+        <div class="copyright">Copyright &copy; 2020 creek</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import RouteView from './RouteView'
-import { mixinDevice } from '@/utils/mixin'
+import { deviceMixin } from '@/store/device-mixin'
 
 export default {
   name: 'UserLayout',
-  components: { RouteView },
-  mixins: [mixinDevice],
-  data () {
-    return {}
-  },
+  mixins: [deviceMixin],
   mounted () {
     document.body.classList.add('userLayout')
   },
@@ -101,7 +92,7 @@ export default {
         .title {
           font-size: 33px;
           color: rgba(0, 0, 0, 0.85);
-          font-family: Avenir, "Helvetica Neue", Arial, Helvetica, sans-serif;
+          font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
           font-weight: 600;
           position: relative;
           top: 2px;

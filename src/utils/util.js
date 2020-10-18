@@ -10,6 +10,18 @@ export function welcome () {
   return arr[index]
 }
 
+export function UUID () {
+  const str = '0123456789abcdef'
+  const arr = []
+  for (let i = 0; i < 36; i++) {
+    arr.push(str.substr(Math.floor(Math.random() * 0x10), 1))
+  }
+  arr[14] = 4
+  arr[19] = str.substr(arr[19] & 0x3 | 0x8, 1)
+  arr[8] = arr[13] = arr[18] = arr[23] = '-'
+  return arr.join('')
+}
+
 /**
  * 触发 window.resize
  */
@@ -24,7 +36,7 @@ export function handleScrollHeader (callback) {
   let timer = 0
 
   let beforeScrollTop = window.pageYOffset
-  callback = callback || function () {}
+  callback = callback || function () { }
   window.addEventListener(
     'scroll',
     event => {
@@ -43,6 +55,13 @@ export function handleScrollHeader (callback) {
     },
     false
   )
+}
+
+export function isIE () {
+  const bw = window.navigator.userAgent
+  const compare = (s) => bw.indexOf(s) >= 0
+  const ie11 = (() => 'ActiveXObject' in window)()
+  return compare('MSIE') || ie11
 }
 
 /**

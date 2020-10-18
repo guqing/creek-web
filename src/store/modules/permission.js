@@ -1,54 +1,8 @@
-import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
-
-/**
- * 过滤账户是否拥有某一个权限，并将菜单从加载列表移除
- *
- * @param permission
- * @param route
- * @returns {boolean}
- */
-function hasPermission(permission, route) {
-  if (route.meta && route.meta.permission) {
-    let flag = false
-    for (let i = 0, len = permission.length; i < len; i++) {
-      flag = route.meta.permission.includes(permission[i])
-      if (flag) {
-        return true
-      }
-    }
-    return false
-  }
-  return true
-}
-
-/**
- * 单账户多角色时，使用该方法可过滤角色不存在的菜单
- *
- * @param roles
- * @param route
- * @returns {*}
- */
-// eslint-disable-next-line
-function hasRole(roles, route) {
-  if (route.meta && route.meta.roles) {
-    return route.meta.roles.includes(roles.id)
-  } else {
-    return true
-  }
-}
-
-function filterAsyncRouter(routerMap, roles) {
-  const accessedRouters = routerMap.filter(route => {
-    if (hasPermission(roles.permissionList, route)) {
-      if (route.children && route.children.length) {
-        route.children = filterAsyncRouter(route.children, roles)
-      }
-      return true
-    }
-    return false
-  })
-  return accessedRouters
-}
+import { constantRouterMap } from '@/config/router.config'
+import { generatorDynamicRouter } from '@/router/generator-routers'
+import { ROUTER_MAP } from '@/store/mutation-types'
+import storage from 'store'
+import menuApi from '@/api/menu'
 
 const permission = {
   state: {
@@ -62,15 +16,32 @@ const permission = {
     }
   },
   actions: {
-    GenerateRoutes({ commit }, data) {
-      return new Promise(resolve => {
-        const { roles } = data
-        const accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
-        commit('SET_ROUTERS', accessedRouters)
-        resolve()
+    GenerateRoutes ({ commit }) {
+      return new Promise((resolve, reject) => {
+        var routerMap = storage.get(ROUTER_MAP)
+        if (routerMap) {
+          getDnamicRouter(routerMap, commit)
+          resolve()
+        } else {
+          menuApi.listRouterMap().then(res => {
+            var result = res.data
+            // 设置到localStorage中
+            storage.set(ROUTER_MAP, result)
+            getDnamicRouter(result, commit)
+            resolve()
+          }).catch(err => {
+            reject(err)
+          })
+        }
       })
     }
   }
 }
 
+function getDnamicRouter (data, commit) {
+  generatorDynamicRouter(data).then(res => {
+    commit('SET_ROUTERS', res)
+    commit('SET_ROUTERMAP', res)
+  })
+}
 export default permission

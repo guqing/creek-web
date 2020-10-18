@@ -1,22 +1,27 @@
-import Vue from 'vue'
-import { login, logout } from '@/api/login'
-import userAPI from '@/api/user'
+import storage from 'store'
+import { login, socailSignLogin, getInfo } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
 const user = {
   state: {
     token: '',
+    gatewayToken: '',
     name: '',
     welcome: '',
     avatar: '',
     roles: [],
-    info: {}
+    info: {},
+    routerMap: []
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_GATEWAY_TOKEN: (state, token) => {
+      state.gatewayToken = token
+      sessionStorage.setItem('GateWay_Token', token)
     },
     SET_NAME: (state, { name, welcome }) => {
       state.name = name
@@ -30,68 +35,74 @@ const user = {
     },
     SET_INFO: (state, info) => {
       state.info = info
+    },
+    SET_ROUTERMAP: (state, routerMap) => {
+      state.routerMap = routerMap
     }
   },
 
   actions: {
     // 登录
-    Login({ commit }, userInfo) {
+    Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo)
           .then(response => {
-            if (response.code === 0) {
-              Vue.ls.set(ACCESS_TOKEN, response.data, 7 * 24 * 60 * 60 * 1000)
-              commit('SET_TOKEN', response.data)
-              resolve(response)
-            } else {
-              reject(response)
-            }
+            var token = getToken(response.data)
+            console.log(response.data)
+            storage.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
+            commit('SET_TOKEN', token)
+            resolve()
           })
           .catch(error => {
             reject(error)
           })
       })
     },
-
-    // 获取用户信息
-    GetInfo({ commit }) {
+    SocialLogin ({ commit }, data) {
       return new Promise((resolve, reject) => {
-        userAPI
-          .getInfo()
+        console.log('social login:', data)
+        var tokenInfo = data || ''
+        if (tokenInfo === '') {
+          console.log('socail login is null')
+          reject(tokenInfo)
+        }
+
+        var token = getToken(tokenInfo)
+
+        // 设置到localStorage中
+        storage.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
+        console.log('vuex token:', token)
+        // 设置到vuex中
+        commit('SET_TOKEN', token)
+        console.log('vuex get after set：', storage.get(ACCESS_TOKEN))
+        resolve(tokenInfo)
+      })
+    },
+    SocialSignLogin ({ commit }, data) {
+      return new Promise(resolve => {
+        socailSignLogin(data).then(res => {
+          console.log('social sign login:', res)
+          var token = getToken(res.data)
+
+          // 设置到localStorage中
+          storage.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
+          console.log('社交注册绑定的登录成功:', res.data)
+          // 设置到vuex中
+          commit('SET_TOKEN', token)
+          // 设置用户信息
+          setUserInfo(res.data.userInfo, commit)
+          resolve(token)
+        })
+      })
+    },
+    // 获取用户信息
+    GetInfo ({ commit }) {
+      return new Promise((resolve, reject) => {
+        getInfo()
           .then(response => {
+            console.log('get user info:', response)
             const result = response.data
-            if (result.role && result.role.permissions.length > 0) {
-              const role = result.role
-              role.permissions = result.role.permissions
-              role.permissions.map(per => {
-                if (
-                  per.actionEntitySet != null &&
-                  per.actionEntitySet.length > 0
-                ) {
-                  const action = per.actionEntitySet.map(action => {
-                    return action.action
-                  })
-                  per.actionList = action
-                }
-              })
-
-              role.permissionList = role.permissions.map(permission => {
-                return permission.identify
-              })
-              commit('SET_ROLES', result.role)
-              commit('SET_INFO', result)
-            } else {
-              reject(new Error('getInfo: roles must be a non-null array !'))
-            }
-
-            commit('SET_NAME', { name: result.nickname, welcome: welcome() })
-            if (result.avatar === '') {
-              var avatar = '/avatar2.jpg'
-              commit('SET_AVATAR', avatar)
-              result.avatar = avatar
-            } else {
-              commit('SET_AVATAR', result.avatar)
-            }
+            setUserInfo(result, commit)
             resolve(result)
           })
           .catch(error => {
@@ -101,22 +112,40 @@ const user = {
     },
 
     // 登出
-    Logout({ commit, state }) {
+    Logout ({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
-        Vue.ls.remove(ACCESS_TOKEN)
-
-        logout(state.token)
-          .then(() => {
-            resolve()
-          })
-          .catch(() => {
-            resolve()
-          })
+        storage.remove(ACCESS_TOKEN)
+        resolve()
       })
     }
   }
 }
 
+function getToken (tokenInfo) {
+  const current = new Date()
+  const expireTime = current.setTime(current.getTime() + 1000 * tokenInfo.expires_in)
+
+  return {
+    access_token: tokenInfo.access_token,
+    refresh_token: tokenInfo.refresh_token,
+    expireTime: expireTime,
+    token_type: tokenInfo.token_type
+  }
+}
+
+function setUserInfo (result, commit) {
+  // commit('SET_ROLES', [result.roleName])
+  commit('SET_INFO', result)
+  commit('SET_ROLES', result.roleIds)
+  commit('SET_NAME', { name: result.nickname || result.username, welcome: welcome() })
+  if (!result.avatar) {
+    var avatar = '/avatar.png'
+    commit('SET_AVATAR', avatar)
+    result.avatar = avatar
+  } else {
+    commit('SET_AVATAR', result.avatar)
+  }
+}
 export default user
