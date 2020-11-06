@@ -4,13 +4,6 @@ const getters = {
   theme: state => state.app.theme,
   color: state => state.app.color,
   token: state => state.user.token,
-  gatewayToken: state => {
-    const token = state.user.gatewayToken
-    if (token === '') {
-      return sessionStorage.getItem('GateWay_Token')
-    }
-    return token
-  },
   avatar: state => state.user.avatar,
   nickname: state => state.user.name,
   welcome: state => state.user.welcome,

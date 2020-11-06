@@ -12,12 +12,8 @@ const request = axios.create({
   timeout: 6000 // 请求超时时间
 })
 
-// 网关路径前缀
-const GATEWAY_PATH = '/route/auth'
-
 // 异常拦截处理器
 const errorHandler = (error) => {
-  console.log('请求异常:', error.response)
   const res = error.response
   if (res) {
     const data = res.data
@@ -40,16 +36,6 @@ const errorHandler = (error) => {
           }, 1500)
         })
       }
-    } if (res.status === 401 && isGateWayRequest(res.config.url)) {
-      notification.error({
-        message: 'Unauthorized',
-        description: '认证已失效，请重新认证'
-      })
-    } if (res.status === 403 && isGateWayRequest(res.config.url)) {
-      notification.error({
-        message: 'Forbidden',
-        description: '抱歉，你无此操作权限，禁止访问'
-      })
     } else {
       notification.error({
         message: '请求失败',
@@ -62,16 +48,10 @@ const errorHandler = (error) => {
 
 // request interceptor
 request.interceptors.request.use(config => {
-  const gatewayToken = store.getters.gatewayToken
-  if (gatewayToken && isGateWayRequest(config.url)) {
-    // 网关服务请求带网关的token
-    config.headers['Authorization'] = 'bearer ' + gatewayToken
-  } else {
-    const token = storage.get(ACCESS_TOKEN)
-    if (token) {
-      // 其他请求带认证服务器的token
-      config.headers['Authorization'] = 'bearer ' + token.access_token
-    }
+  const token = storage.get(ACCESS_TOKEN)
+  if (token) {
+    // 其他请求带认证服务器的token
+    config.headers['Authorization'] = 'bearer ' + token.access_token
   }
 
   return config
@@ -87,10 +67,6 @@ const installer = {
   install (Vue) {
     Vue.use(VueAxios, request)
   }
-}
-
-function isGateWayRequest (url) {
-  return url.startsWith(GATEWAY_PATH)
 }
 
 export default request

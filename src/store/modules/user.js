@@ -6,7 +6,6 @@ import { welcome } from '@/utils/util'
 const user = {
   state: {
     token: '',
-    gatewayToken: '',
     name: '',
     welcome: '',
     avatar: '',
@@ -18,10 +17,6 @@ const user = {
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
-    },
-    SET_GATEWAY_TOKEN: (state, token) => {
-      state.gatewayToken = token
-      sessionStorage.setItem('GateWay_Token', token)
     },
     SET_NAME: (state, { name, welcome }) => {
       state.name = name
