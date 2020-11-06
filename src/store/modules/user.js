@@ -1,6 +1,6 @@
 import storage from 'store'
 import { login, socailSignLogin, getInfo } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { ACCESS_TOKEN, ROUTER_MAP } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
 const user = {
@@ -43,7 +43,6 @@ const user = {
         login(userInfo)
           .then(response => {
             var token = getToken(response.data)
-            console.log(response.data)
             storage.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
             commit('SET_TOKEN', token)
             resolve()
@@ -66,7 +65,6 @@ const user = {
 
         // 设置到localStorage中
         storage.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
-        console.log('vuex token:', token)
         // 设置到vuex中
         commit('SET_TOKEN', token)
         console.log('vuex get after set：', storage.get(ACCESS_TOKEN))
@@ -111,7 +109,9 @@ const user = {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
+        commit('SET_ROUTERMAP', [])
         storage.remove(ACCESS_TOKEN)
+        storage.remove(ROUTER_MAP)
         resolve()
       })
     }

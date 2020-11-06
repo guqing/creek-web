@@ -22,3 +22,13 @@ yarn run serve
 编译项目
 yarn run build
 ```
+
+## 项目预览
+
+[Creek 后台项目地址](https://github.com/guqing/creek.git)
+
+![workplace](./docs/screenshot/workplace.png)
+![login_log](./docs/screenshot/login_log.png)
+![menu_list.png](./docs/screenshot/menu_list.png)
+![role_list.png](./docs/screenshot/role_list.png)
+![profile](./docs/screenshot/profile.png)
