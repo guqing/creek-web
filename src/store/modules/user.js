@@ -1,5 +1,5 @@
 import storage from 'store'
-import { login, socailSignLogin, getInfo } from '@/api/login'
+import { login, refreshToken, socailSignLogin, getInfo } from '@/api/login'
 import { ACCESS_TOKEN, ROUTER_MAP } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
@@ -43,6 +43,20 @@ const user = {
         login(userInfo)
           .then(response => {
             var token = getToken(response.data)
+            storage.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
+            commit('SET_TOKEN', token)
+            resolve()
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+    RefreshToken ({ commit }, token) {
+      return new Promise((resolve, reject) => {
+        refreshToken(token)
+          .then(res => {
+            var token = getToken(res.data)
             storage.set(ACCESS_TOKEN, token, 7 * 24 * 60 * 60 * 1000)
             commit('SET_TOKEN', token)
             resolve()

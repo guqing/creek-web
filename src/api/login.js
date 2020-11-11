@@ -19,6 +19,16 @@ export function login (parameter) {
   })
 }
 
+export function refreshToken (parameter) {
+  return axios({
+    url: '/authorize/refresh',
+    method: 'post',
+    data: {
+      token: parameter
+    }
+  })
+}
+
 export function bindSocial (parameter) {
   return axios({
     url: '/social/bind',

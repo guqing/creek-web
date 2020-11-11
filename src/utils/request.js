@@ -11,15 +11,34 @@ const request = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
   timeout: 6000 // 请求超时时间
 })
-
 // 异常拦截处理器
-const errorHandler = (error) => {
+const errorHandler = error => {
   const res = error.response
   if (res) {
     const data = res.data
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
-    if (data.dcode === 'A0320') {
+    if (token.expireTime < Date.now()) {
+      // token 过期换取token
+      return store
+          .dispatch('RefreshToken', token.refresh_token)
+          .then(() => {
+            console.log('token过期, 自动刷新token')
+            // 重新请求
+            return request(res.config)
+          })
+          .catch(() => {
+            notification.error({
+              message: 'Unauthorized',
+              description: '登录已过期,请重新登录'
+            })
+            store.dispatch('Logout').then(() => {
+              setTimeout(() => {
+                window.location.reload()
+              }, 1500)
+            })
+          })
+    } else if (data.code === 'A0320') {
       notification.error({
         message: 'Forbidden',
         description: data.message
@@ -27,8 +46,9 @@ const errorHandler = (error) => {
     } else if (data.code === 'A0300') {
       notification.error({
         message: 'Unauthorized',
-        description: '授权失败，请重新登录'
+        description: '登录已过期,请重新登录'
       })
+
       if (token) {
         store.dispatch('Logout').then(() => {
           setTimeout(() => {
@@ -58,7 +78,7 @@ request.interceptors.request.use(config => {
 }, errorHandler)
 
 // response interceptor
-request.interceptors.response.use((response) => {
+request.interceptors.response.use(response => {
   return response.data
 }, errorHandler)
 
@@ -71,7 +91,4 @@ const installer = {
 
 export default request
 
-export {
-  installer as VueAxios,
-  request as axios
-}
+export { installer as VueAxios, request as axios }
